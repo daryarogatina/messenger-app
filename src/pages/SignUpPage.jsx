@@ -1,7 +1,7 @@
 // Страница для регистрации логина и пароля пользователя
 
 // import React from 'react';
-// import SignUpContainer from './containers/SignUpContainer';
+// import SignUpContainer from '../containers/SignUpContainer';
 
 const SignUpPage = () => {
   return (

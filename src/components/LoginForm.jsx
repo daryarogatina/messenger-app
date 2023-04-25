@@ -25,7 +25,6 @@ export default function LoginForm () {
         password: data.get('password'),
       });
     };
-  
     return (
       <ThemeProvider theme={theme}>
         <Container component="main" maxWidth="xs">
@@ -70,11 +69,11 @@ export default function LoginForm () {
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >
-                Sign In
+                Sign in
               </Button>
               <Grid container>
                 <Grid item>
-                  <Link href="#" variant="body2">
+                  <Link href="/signup" variant="body2">
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </Grid>
