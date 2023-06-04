@@ -1,49 +1,98 @@
 // Здесь будет определяться пользовательский интерфейс для формы входа в мессенджер (поля, кнопки),
 // который получает от пользователя реквизиты для данных формы, ошибок и обработчиков событий
 // файл затем импортируется в LoginFormContainer.js
-
-import * as React from 'react';
+import * as React  from 'react';
+import { Component } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
+import axios from 'axios';
 
 const theme = createTheme();
 
-export default function LoginForm () {
-    const handleSubmit = (event) => {
-      event.preventDefault();
-      const data = new FormData(event.currentTarget);
-      console.log({
-        email: data.get('email'),
-        password: data.get('password'),
-      });
+
+export default class LoginForm extends Component {
+
+    state = {
+      email: "",
+      password: "",
     };
-    return (
+
+  handleSubmit = (event) => {
+    event.preventDefault();
+
+  }
+  
+  componentDidMount() {
+    
+    ValidatorForm.addValidationRule("notEmpty", (value) => {
+      // console.log(value)
+      return (value).length > 0;
+    });
+  }
+
+  checkUser = () => {
+    const { email, password } = this.state;
+    if (email.length && password.length) {
+    axios.get(`http://localhost:4000/login?email=${email}&password=${password}`)
+      .then((response) => {
+        console.log(response);
+        if (response.data) localStorage.setItem('userId',response.data[0].id);
+        this.setState({
+          email: response.data,
+          password: response.data,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    } 
+  }
+
+  handleInputChange = (event) => {
+    const { name, value } = event.target;
+    this.setState({ [name]: value });
+  };
+
+  handleLogin = () => {
+    this.checkUser();
+    window.location.href = "/profile"
+  };
+
+  render() {
+    const { email, password } = this.state;
+   
+    return ( 
+      
       <ThemeProvider theme={theme}>
         <Container component="main" maxWidth="xs">
           <CssBaseline />
           <Box
             sx={{
               marginTop: 8,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            </Avatar>
+            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}></Avatar>
             <Typography component="h1" variant="h5">
               Sign in
             </Typography>
-            <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-              <TextField
+            <Box
+              onSubmit={this.handleSubmit}
+              noValidate
+              sx={{ mt: 1, width: 400}}
+            >
+              <ValidatorForm onSubmit={this.handleSubmit}> 
+              <TextValidator
                 margin="normal"
                 required
                 fullWidth
@@ -52,8 +101,12 @@ export default function LoginForm () {
                 name="email"
                 autoComplete="email"
                 autoFocus
+                value={email}
+                onChange={this.handleInputChange}
+                validators={["notEmpty", "isEmail"]}
+                errorMessages={['Incorrect email', 'Email is not valid']}
               />
-              <TextField
+              <TextValidator
                 margin="normal"
                 required
                 fullWidth
@@ -62,27 +115,34 @@ export default function LoginForm () {
                 type="password"
                 id="password"
                 autoComplete="current-password"
+                value={password}
+                onChange={this.handleInputChange}
+                validators={["notEmpty"]}
+                errorMessages={['Incorrect password']}
               />
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
+                onClick={this.handleLogin}
               >
                 Sign in
               </Button>
+              </ValidatorForm>
               <Grid container>
                 <Grid item>
-                  <Link href="/signup" variant="body2">
+                  <Link href="/signUp" variant="body2">
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </Grid>
               </Grid>
             </Box>
           </Box>
-          <Box mt={8}>
-          </Box>
+          <Box mt={8}></Box>
         </Container>
-      </ThemeProvider>
+      </ThemeProvider>  
     );
   }
+}
+
