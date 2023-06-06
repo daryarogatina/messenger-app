@@ -2,20 +2,26 @@
 // Он содержит логику для рендеринга маршрутов и получения данных с сервера.
 
 import './App.css';
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import {LoginPage} from "./pages/LoginPage";
 import {SignUpPage} from './pages/SignUpPage'
 import {RegFormPage} from './pages/RegFormPage';
+import {ProfilePage} from './pages/ProfilePage';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 function App() {
   return (
+    <LocalizationProvider dateAdapter={AdapterDayjs}> 
     <>
       <Routes>
         <Route path="/" element={<LoginPage/>} />
-        <Route path="/signup" element={<SignUpPage/>} />
+        <Route path="/signUp" element={<SignUpPage/>} />
         <Route path="/registration" element={<RegFormPage/>} />
+        <Route path="/profile" element={<ProfilePage/>} />
       </Routes>
    </>
+   </LocalizationProvider>
   );
 }
 
